@@ -23,10 +23,29 @@ class FirstController extends AbstractController
 
     // }
 
-    #[Route('/sayHello/{name}', name: 'say_hello')]
+    #[Route('/sayHello/{name}', name: 'say.hello')]
     public function sayHelloName($name): Response
     {
         return $this->render('first/hello.html.twig', ['nom' => $name]);
 
     }
+
+    #[Route('/multiplication/{nb1}/{nb2}/{name?Fabien}', name: 'multiplie_numbers')]
+    public function multiplie($nb1, $nb2, $name): Response
+    {
+        $result = $nb1 * $nb2;
+        return $this->render('first/hello.html.twig', ['result' => $result, 'nom' => $name]);
+    }
+
+    #[Route(
+        '/multiplication2/{nb1}/{nb2}',  // '/multiplication2/{nb1<\d+>}/{nb2<\d+>}'  requirements raccourci
+        name: 'multiplication',
+        requirements: ['nb1' => '\d+', 'nb2' => '\d+']  // verifie param avant envoi avec regex (404 si pb)
+        )]
+    public function multiplie2($nb1, $nb2)
+    {
+        $result = $nb1 * $nb2;
+        return new Response(content: "<h1>$result</h1>");
+    }
+
 }
