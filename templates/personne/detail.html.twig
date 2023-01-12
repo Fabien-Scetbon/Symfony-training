@@ -7,8 +7,15 @@
     <title>Personne</title>
 </head>
 <body>
-    <div>
-        {{ personne.firstname }} {{ personne.lastname }} a {{ personne.age }} ans
-    </div>
+    {% for message in app.session.flashBag.get('error') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+    {% if (personne) %}
+        <div>
+            {{ personne.firstname }} {{ personne.lastname }} a {{ personne.age }} ans
+        </div>
+    {% endif %}
 </body>
 </html>

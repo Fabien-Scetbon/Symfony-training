@@ -8,13 +8,14 @@
     <title>Liste personnes</title>
 </head>
 <body>
-<h1>Liste des personnes</h1>
+    <h1>Liste des personnes</h1>
     <table class="table table-success table-striped">
         <tr>
             <th>Prénom</th>
             <th>Nom</th>
             <th>Age</th>
             <th>Job</th>
+            <th>Détails</th>
         </tr>
         {% for personne in personnes %}
             <tr>
@@ -22,8 +23,22 @@
                 <th>{{ personne.lastname }}</th>
                 <th>{{ personne.age }}</th>
                 <th>{{ personne.job }}</th>
+                <th>
+                    <a href="{{ path('personne.detail' , {id : personne.id }) }}">Détails</a>
+                </th>
             </tr>
         {% endfor %}
     </table>
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        </ul>
+    </nav>
+    
 </body>
 </html>

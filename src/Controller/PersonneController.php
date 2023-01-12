@@ -11,12 +11,57 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('personne')]
 class PersonneController extends AbstractController
 {
-    #[Route('/', name: 'personne.list')]
+    #[Route('/all', name: 'personne.all')]
     public function index(ManagerRegistry $doctrine): Response {
         $repository = $doctrine->getRepository( persistentObject: Personne::class);
         $personnes = $repository->findAll();
         return $this->render('personne/index.html.twig',
         ['personnes' => $personnes]
+    );
+    }
+
+    #[Route('/firstname/{firstname}', name: 'personne.firstname')]
+    public function indexAll(ManagerRegistry $doctrine, $firstname): Response {
+        $repository = $doctrine->getRepository( persistentObject: Personne::class);
+        $personnes = $repository->findBy(
+            ['firstname' => $firstname],
+            ['age' => 'DESC']
+        );
+        return $this->render('personne/index.html.twig',
+        ['personnes' => $personnes]
+    );
+    }
+
+    #[Route('/page/{page?1}/{nb?10}', name: 'personne.page')]
+    public function indexAllPage(ManagerRegistry $doctrine, $page, $nb): Response {
+        $repository = $doctrine->getRepository( persistentObject: Personne::class);
+        $nbPersonnes = $repository->count([]);  // erreur mais ça marche
+        
+        $personnes = $repository->findBy(
+            [],
+            limit: $nb,
+            offset: $nb*($page - 1)
+        );
+        return $this->render('personne/index.html.twig',
+        ['personnes' => $personnes]
+    );
+    }
+
+    #[Route('/{id<\d+>}', name: 'personne.detail')]
+    // public function detail(ManagerRegistry $doctrine, $id): Response {
+    //     $repository = $doctrine->getRepository( persistentObject: Personne::class);
+    //     $personne = $repository->find($id);
+
+    // on utilise les params converter pour simplifier le code ci-dessus :
+
+    public function detail(Personne $personne = null): Response {   // null si id n'existe pas
+
+        if(!$personne) {
+            $this->addFlash( type: 'error', message: "La personne n'existe pas");
+        }
+
+        return $this->render('personne/detail.html.twig',
+        ['personne' => $personne]
     );
     }
 
