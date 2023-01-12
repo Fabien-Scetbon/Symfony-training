@@ -35,15 +35,21 @@ class PersonneController extends AbstractController
     #[Route('/page/{page?1}/{nb?10}', name: 'personne.page')]
     public function indexAllPage(ManagerRegistry $doctrine, $page, $nb): Response {
         $repository = $doctrine->getRepository( persistentObject: Personne::class);
+
         $nbPersonnes = $repository->count([]);  // erreur mais ça marche
-        
+        $nbPages = ceil($nbPersonnes / $nb);
+
         $personnes = $repository->findBy(
             [],
             limit: $nb,
             offset: $nb*($page - 1)
         );
-        return $this->render('personne/index.html.twig',
-        ['personnes' => $personnes]
+        
+        return $this->render('personne/index.html.twig', [
+            'personnes' => $personnes,
+            'nbPages'   => $nbPages,
+            'page'      => $page
+        ]
     );
     }
 
