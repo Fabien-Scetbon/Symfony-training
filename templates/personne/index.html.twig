@@ -8,6 +8,18 @@
     <title>Liste personnes</title>
 </head>
 <body>
+    {% for message in app.session.flashBag.get('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    {% for message in app.session.flashBag.get('error') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+    {% endfor %}
+    
     <h1>Liste des personnes</h1>
     <table class="table table-success table-striped">
         <tr>
@@ -16,6 +28,7 @@
             <th>Age</th>
             <th>Job</th>
             <th>Détails</th>
+            <th>Effacer</th>
         </tr>
         {% for personne in personnes %}
             <tr>
@@ -25,6 +38,9 @@
                 <th>{{ personne.job }}</th>
                 <th>
                     <a href="{{ path('personne.detail' , {id : personne.id }) }}">Détails</a>
+                </th>
+                <th>
+                    <a href="{{ path('personne.delete' , {id : personne.id }) }}">Effacer</a>
                 </th>
             </tr>
         {% endfor %}

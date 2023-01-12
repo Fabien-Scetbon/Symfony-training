@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Personne;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -44,7 +45,7 @@ class PersonneController extends AbstractController
             limit: $nb,
             offset: $nb*($page - 1)
         );
-        
+
         return $this->render('personne/index.html.twig', [
             'personnes' => $personnes,
             'nbPages'   => $nbPages,
@@ -72,9 +73,8 @@ class PersonneController extends AbstractController
     }
 
     #[Route('/add', name: 'personne.add')]
-    public function addPersonne(ManagerRegistry $doctrine): Response    // $doctrine ou autre nom
-    {
-        $entityManager = $doctrine->getManager();
+    public function addPersonne(ManagerRegistry $doctrine): Response {  // $doctrine ou autre nom
+        $manager = $doctrine->getManager();
         $personne = new Personne();
         $personne->setFirstname( firstname: 'Fabien');
         $personne->setLastname( lastname: 'Scetb');
@@ -82,14 +82,61 @@ class PersonneController extends AbstractController
         // champ job rempli plus tard
 
         // ajouter operation insertion dans la transaction
-        $entityManager->persist($personne); // valable pour ajout ou modif suivant si l'id existe ou pas
+        $manager->persist($personne); // valable pour ajout ou modif suivant si l'id existe ou pas
         // on aurait pu ajouter d'autres personnes .....
 
         // execute la transaction
-        $entityManager->flush();
+        $manager->flush();
 
         return $this->render('personne/detail.html.twig', [  // le gars du tuto a prefere refaire une page detail 
             'personne' => $personne,
         ]);
+    }
+
+    #[Route('/delete/{id<\d+>}', name: 'personne.delete')]
+    public function deletePersonne(Personne $personne = null, ManagerRegistry $doctrine): RedirectResponse {    // manager pour utiliser remove
+    
+        // Recuperer la personne
+        if ($personne) {  // si personne existe, la sup et retourner flashMess
+            
+            $manager = $doctrine->getManager();
+
+            // ajoute la fct de suppr dans la transaction
+            $manager->remove($personne);
+
+            // executer la transaction
+            $manager->flush();
+            $this->addFlash( type: 'success', message: "Suppression réussie");
+
+        } else {
+            $this->addFlash( type: 'error', message: "La personne n'existe pas");
+        }
+
+        return $this->redirectToRoute(route: 'personne.page');
+    }
+
+    #[Route('/update/{id<\d+>}/{firstname}/{lastname}/{age}', name: 'personne.update')]
+    public function updatePersonne(Personne $personne = null, ManagerRegistry $doctrine, $firstname, $lastname, $age): RedirectResponse {    // manager pour utiliser remove
+    
+        // Recuperer la personne
+        if ($personne) { 
+
+            $personne->setFirstname($firstname);
+            $personne->setLastname($lastname);
+            $personne->setAge($age);
+            
+            $manager = $doctrine->getManager();
+
+            $manager->persist($personne);  // add si id existe pas, update si id existe
+
+            // executer la transaction
+            $manager->flush();
+            $this->addFlash( type: 'success', message: "Mise à jour réussie");
+
+        } else {
+            $this->addFlash( type: 'error', message: "La personne n'existe pas");
+        }
+
+        return $this->redirectToRoute(route: 'personne.page');
     }
 }
