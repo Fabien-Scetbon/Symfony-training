@@ -1,20 +1,29 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}Hello PersonneController!{% endblock %}
-
-{% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/home/fabino/programmation/Symfony/tutoYT/src/Controller/PersonneController.php'|file_link(0) }}">src/Controller/PersonneController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/home/fabino/programmation/Symfony/tutoYT/templates/personne/index.html.twig'|file_link(0) }}">templates/personne/index.html.twig</a></code></li>
-    </ul>
-</div>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.css')}}">
+    <title>Liste personnes</title>
+</head>
+<body>
+<h1>Liste des personnes</h1>
+    <table class="table table-success table-striped">
+        <tr>
+            <th>Prénom</th>
+            <th>Nom</th>
+            <th>Age</th>
+            <th>Job</th>
+        </tr>
+        {% for personne in personnes %}
+            <tr>
+                <th>{{ personne.firstname }}</th>
+                <th>{{ personne.lastname }}</th>
+                <th>{{ personne.age }}</th>
+                <th>{{ personne.job }}</th>
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
