@@ -85,8 +85,8 @@ class PersonneController extends AbstractController
     public function addPersonne(ManagerRegistry $doctrine): Response {  // $doctrine ou autre nom
         $manager = $doctrine->getManager();
         $personne = new Personne();
-        $personne->setFirstname( firstname: 'Pauline');
-        $personne->setLastname( lastname: 'Pierot');
+        $personne->setFirstname( firstname: 'Popo');
+        $personne->setLastname( lastname: 'Papa');
         $personne->setAge( age: '25');
         // champ job rempli plus tard
 
