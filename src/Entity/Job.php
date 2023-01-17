@@ -5,11 +5,15 @@ namespace App\Entity;
 use App\Repository\JobRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use App\Traits\TimeStampTrait;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: JobRepository::class)]
+#[ORM\HasLifecycleCallbacks()] 
 class Job
 {
+    use TimeStampTrait;    
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
