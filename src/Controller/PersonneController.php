@@ -3,10 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Personne;
+use App\Form\PersonneType;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('personne')]
@@ -82,25 +84,57 @@ class PersonneController extends AbstractController
     }
 
     #[Route('/add', name: 'personne.add')]
-    public function addPersonne(ManagerRegistry $doctrine): Response {  // $doctrine ou autre nom
-        $manager = $doctrine->getManager();
-        $personne = new Personne();
-        $personne->setFirstname( firstname: 'Popo');
-        $personne->setLastname( lastname: 'Papa');
-        $personne->setAge( age: '25');
-        // champ job rempli plus tard
 
-        // ajouter operation insertion dans la transaction
-        $manager->persist($personne); // valable pour ajout ou modif suivant si l'id existe ou pas
-        // on aurait pu ajouter d'autres personnes .....
+    // VERSION SANS FORMULAIRE
+    // public function addPersonne(ManagerRegistry $doctrine): Response {  // $doctrine ou autre nom
+    //     $manager = $doctrine->getManager();
 
-        // execute la transaction
-        $manager->flush();
+        // $personne = new Personne();
+        // $personne->setFirstname( firstname: 'Popo');
+        // $personne->setLastname( lastname: 'Papa');
+        // $personne->setAge( age: '25');
+        // // // champ job rempli plus tard
 
-        return $this->render('personne/detail.html.twig', [  // le gars du tuto a prefere refaire une page detail 
-            'personne' => $personne,
-        ]);
-    }
+        // // // ajouter operation insertion dans la transaction
+        // $manager->persist($personne); // valable pour ajout ou modif suivant si l'id existe ou pas
+        // // // on aurait pu ajouter d'autres personnes .....
+
+        // // // execute la transaction
+        // $manager->flush();
+
+        // return $this->render('personne/detail.html.twig', [  // le gars du tuto a prefere refaire une page detail 
+        //     'personne' => $personne,
+        // ]);
+
+        // VERSION AVEC FORM
+        public function addPersonne(ManagerRegistry $doctrine, Request $request): Response {
+
+            $personne = new Personne();
+            $form = $this->createForm(PersonneType::class, $personne);  // donner nom qu'on veut
+            $form->remove(name:'createdAt'); // ne pas afficher ces champs dans la vue du form
+            $form->remove(name:'updatedAt');
+
+            // dump($request);
+            $form->handleRequest($request);
+            if($form->isSubmitted()) {
+                // dd($personne); ou dd($form->getData());
+                $manager = $doctrine->getManager();
+                $manager->persist($personne);
+                $manager->flush();
+
+                $this->addFlash(type: 'success', message: $personne->getLastname(). " ajoutée avec succès");
+                return $this->redirectToRoute(route: 'personne.page');
+
+            } else {
+                return $this->render('personne/add-personne.html.twig', [   
+                    'form' => $form,
+                ]);
+            }
+
+            return $this->render('personne/add-personne.html.twig', [  // le gars du tuto a prefere refaire une page detail 
+                'form' => $form,
+            ]);
+        }
 
     #[Route('/delete/{id<\d+>}', name: 'personne.delete')]
     public function deletePersonne(Personne $personne = null, ManagerRegistry $doctrine): RedirectResponse {    // manager pour utiliser remove
