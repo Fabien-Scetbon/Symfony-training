@@ -29,6 +29,7 @@
             <th>Job</th>
             <th>Détails</th>
             <th>Effacer</th>
+            <th>Editer</th>
         </tr>
         {% for personne in personnes %}
             <tr>
@@ -41,6 +42,9 @@
                 </th>
                 <th>
                     <a href="{{ path('personne.delete' , {id : personne.id }) }}">Effacer</a>
+                </th>
+                <th>
+                    <a href="{{ path('personne.edit' , {id : personne.id }) }}">Editer</a>
                 </th>
             </tr>
         {% endfor %}

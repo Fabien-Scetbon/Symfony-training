@@ -83,7 +83,7 @@ class PersonneController extends AbstractController
     );
     }
 
-    #[Route('/add', name: 'personne.add')]
+    #[Route('/add', name: 'personne.add')] // la route add marche très bien mais /edit permet de creer et update (voir plus bas)
 
     // VERSION SANS FORMULAIRE
     // public function addPersonne(ManagerRegistry $doctrine): Response {  // $doctrine ou autre nom
@@ -110,7 +110,7 @@ class PersonneController extends AbstractController
         public function addPersonne(ManagerRegistry $doctrine, Request $request): Response {
 
             $personne = new Personne();
-            $form = $this->createForm(PersonneType::class, $personne);  // donner nom qu'on veut
+            $form = $this->createForm(PersonneType::class, $personne);  // donner nom qu'on veut (form)
             $form->remove(name:'createdAt'); // ne pas afficher ces champs dans la vue du form
             $form->remove(name:'updatedAt');
 
@@ -123,6 +123,48 @@ class PersonneController extends AbstractController
                 $manager->flush();
 
                 $this->addFlash(type: 'success', message: $personne->getLastname(). " ajoutée avec succès");
+                return $this->redirectToRoute(route: 'personne.page');
+
+            } else {
+                return $this->render('personne/add-personne.html.twig', [   
+                    'form' => $form,
+                ]);
+            }
+
+            return $this->render('personne/add-personne.html.twig', [  // le gars du tuto a prefere refaire une page detail 
+                'form' => $form,
+            ]);
+        }
+
+    #[Route('/edit/{id?0}', name: 'personne.edit')] // id = 0 n'existe pas donc si pas d'id ->ajout sinon ->edit
+        public function editPersonne(Personne $personne = null, ManagerRegistry $doctrine, Request $request): Response {
+
+            $new = false; // juste pour le message (creer ou editer)
+
+            if(!$personne) {
+                $new = true;
+                $personne = new Personne();
+            }
+            
+            $form = $this->createForm(PersonneType::class, $personne);  // donner nom qu'on veut (form)
+            $form->remove(name:'createdAt'); // ne pas afficher ces champs dans la vue du form
+            $form->remove(name:'updatedAt');
+
+            // dump($request);
+            $form->handleRequest($request);
+            if($form->isSubmitted()) {
+                // dd($personne); ou dd($form->getData());
+                $manager = $doctrine->getManager();
+                $manager->persist($personne);
+                $manager->flush();
+
+                if($new) {
+                    $message = " a été ajouté avec succès";
+                } else {
+                    $message = " a été mis à jour avec succès";
+                }
+
+                $this->addFlash(type: 'success', message: $personne->getLastname(). $message);
                 return $this->redirectToRoute(route: 'personne.page');
 
             } else {
