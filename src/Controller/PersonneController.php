@@ -152,7 +152,7 @@ class PersonneController extends AbstractController
 
             // dump($request);
             $form->handleRequest($request);
-            if($form->isSubmitted()) {
+            if($form->isSubmitted() && $form->isValid()) {    // isValid pour utiliser les validateurs
                 // dd($personne); ou dd($form->getData());
                 $manager = $doctrine->getManager();
                 $manager->persist($personne);

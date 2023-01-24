@@ -24,6 +24,7 @@ class PersonneType extends AbstractType
             ->add('updatedAt')
             ->add('profile', EntityType::class, [  // voir options dans la doc (form types reference)
                 'expanded' => true,
+                'required' => false,
                 'class' => Profil::class,           // boutons radio
                 'multiple' => false
             ])
@@ -34,7 +35,8 @@ class PersonneType extends AbstractType
                 'query_builder' => function (EntityRepository $er) {  // voir doc
                     return $er->createQueryBuilder(alias: 'h')
                     ->orderBy( sort: 'h.designation', order: 'ASC');
-                }
+                },
+                'choice_label' => 'designation'
 
             ])
             ->add('job')

@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PersonneRepository::class)]
 #[ORM\HasLifecycleCallbacks()] // pour creer methode createdAt et updatedAt (événements)
@@ -21,6 +22,8 @@ class Personne
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank(message: 'Ne pas laisser ce champ vide')]
+    #[Assert\Length(min: 4, minMessage: 'Trop court')]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 50)]
