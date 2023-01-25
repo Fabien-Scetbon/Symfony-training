@@ -22,8 +22,8 @@ class Personne
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
-    #[Assert\NotBlank(message: 'Ne pas laisser ce champ vide')]
-    #[Assert\Length(min: 4, minMessage: 'Trop court')]
+    #[Assert\NotBlank(message: 'Ne pas laisser ce champ vide')] // validateur
+    #[Assert\Length(min: 4, minMessage: 'Trop court')]          // validateur
     private ?string $firstname = null;
 
     #[ORM\Column(length: 50)]
