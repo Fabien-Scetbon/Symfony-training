@@ -11,7 +11,6 @@ class AddPersonneEvent extends Event
 
     public function __construct(private Personne $personne)
     {
-
     }
 
     public function getPersonne(): Personne {

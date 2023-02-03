@@ -19,7 +19,7 @@ class PersonneController extends AbstractController
     public function __construct(
         // private LoggerInterface $logger,   pas implémentés
         // private Helpers $helper,
-        private EventDispatcherInterface $dispatcher
+        private EventDispatcherInterface $dispatcher  // pour les evenements
     ) {
     }
 
@@ -187,9 +187,11 @@ class PersonneController extends AbstractController
 
             $manager->flush();
 
+            // événements :
+
             if ($new) {
                 $addPersonneEvent = new AddPersonneEvent($personne); // creation evenement
-                $this->dispatcher->dispatch($addPersonneEvent, AddPersonneEvent::ADD_PERSONNE_EVENT);
+                $this->dispatcher->dispatch($addPersonneEvent, AddPersonneEvent::ADD_PERSONNE_EVENT); // dispatch evenement
             }
 
             $this->addFlash(type: 'success', message: $personne->getLastname() . $message);
